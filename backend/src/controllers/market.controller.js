@@ -187,6 +187,87 @@ async function updatePriceAdmin(req, res, next) {
   }
 }
 
+// ─── AquaSangham Live Table Integration ──────────────────────────────────────
+const aquasanghamService = require('../services/aquasangham.service');
+
+/**
+ * GET /api/market/aquasangham/live
+ */
+async function getAquaSanghamLive(req, res, next) {
+  try {
+    const { state, region, species } = req.query;
+    const data = await aquasanghamService.getLiveMarketData({ state, region, species });
+    res.status(200).json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/market/aquasangham/sync
+ */
+async function syncAquaSanghamLive(req, res, next) {
+  try {
+    const syncRes = await aquasanghamService.syncFromAquaSangham();
+    const data = await aquasanghamService.getLiveMarketData(req.body || {});
+    res.status(200).json({
+      success: true,
+      message: 'Synced successfully with AquaSangham live market.',
+      sync: syncRes,
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/market/aquasangham/update-rate
+ */
+async function updateAquaSanghamRate(req, res, next) {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return next(new ApiError(400, 'Validation failed', errors.array()));
+
+    const result = aquasanghamService.updateCountRate(req.body);
+    const data = await aquasanghamService.getLiveMarketData({
+      state: req.body.state,
+      region: req.body.region,
+      species: req.body.species,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: result.message,
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/market/aquasangham/reset-rates
+ */
+async function resetAquaSanghamRates(req, res, next) {
+  try {
+    const result = aquasanghamService.resetCountRates(req.body || {});
+    const data = await aquasanghamService.getLiveMarketData({
+      state: req.body.state,
+      region: req.body.region,
+      species: req.body.species,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: result.message,
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getOverview,
   getSpecies,
@@ -199,4 +280,8 @@ module.exports = {
   createAlert,
   deleteAlert,
   updatePriceAdmin,
+  getAquaSanghamLive,
+  syncAquaSanghamLive,
+  updateAquaSanghamRate,
+  resetAquaSanghamRates,
 };

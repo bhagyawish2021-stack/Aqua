@@ -32,3 +32,17 @@ export const deleteAlert = (alertId) =>
 
 export const updatePriceAdmin = (data) =>
   api.put('/api/market/admin/price', data);
+
+// ─── AquaSangham Live Table API ──────────────────────────────────────────────
+export const getAquaSanghamLive = (params = {}) =>
+  api.get('/api/market/aquasangham/live', { params });
+
+export const syncAquaSanghamLive = (data = {}) =>
+  api.post('/api/market/aquasangham/sync', data);
+
+export const updateAquaSanghamRate = (data) =>
+  api.post('/api/market/aquasangham/update-rate', data);
+
+export const resetAquaSanghamRates = (data = {}) =>
+  api.post('/api/market/aquasangham/reset-rates', data);
+

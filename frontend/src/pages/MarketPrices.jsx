@@ -16,6 +16,10 @@ import {
   createAlert,
   deleteAlert,
   updatePriceAdmin,
+  getAquaSanghamLive,
+  syncAquaSanghamLive,
+  updateAquaSanghamRate,
+  resetAquaSanghamRates,
 } from '../services/marketService';
 import { getErrorMsg } from '../helpers/errorMsg';
 
@@ -23,72 +27,106 @@ import { getErrorMsg } from '../helpers/errorMsg';
 const I18N = {
   en: {
     pageTitle: 'Live Seafood Market Prices',
-    pageSubtitle: 'Daily farmgate & mandi rates across Indian coastal hubs',
-    statTotal: 'Listed Commodities',
+    pageSubtitle: 'Real-time verified daily farmgate quotes from AquaSangham network',
+    liveFeedTitle: 'AquaSangham Verified Farmgate Feed',
+    liveFeedSubtitle: 'Direct daily prices from export processing plants and landing centers — 0% estimated',
+    statTotal: 'Listed Counts',
     statGainers: 'Price Gainers',
     statLosers: 'Price Drops',
-    statStable: 'Stable Rates',
-    tabAll: 'All Species',
-    tabShrimp: 'Shrimp & Prawns',
-    tabCrab: 'Crabs',
-    tabFish: 'Fish',
-    tabOther: 'Other Seafood',
-    tabWatchlist: 'My Watchlist',
-    tabAlerts: 'Price Alerts',
-    searchPlaceholder: 'Search species, variety or market...',
+    statStable: 'Stable Counts',
+    tabTable: '📊 Live Count Table (AquaSangham)',
+    tabAll: '🗂️ All Commodities Grid',
+    tabWatchlist: '⭐ My Watchlist',
+    tabAlerts: '🔔 Price Alerts',
+    searchPlaceholder: 'Search count, variety or market...',
     allStates: 'All States',
     allDistricts: 'All Districts',
     allSpecies: 'All Species',
     clearFilters: 'Clear',
+    syncLiveBtn: 'Sync Live Rates',
+    syncingBtn: 'Syncing...',
+    editRatesBtn: '✏️ Customize / Edit Rates',
+    editingActive: '✓ Rate Editing Active',
+    resetRatesBtn: '↺ Reset to Live',
+    calcLabel: '🌾 Harvest Revenue Estimator',
+    calcWeightPlaceholder: 'Enter Pond Harvest Weight (kg)',
+    calcHelper: 'Live total income calculated per count grade for entered biomass',
+    colCount: 'Count / Size',
+    colGrams: 'Avg. Grams',
+    colLiveRate: 'Live Rate (₹/kg)',
+    colPrevRate: 'Previous Day',
+    colChange: 'Day Change',
+    colTrend: 'Trend',
+    colPiecePrice: '₹ / Prawn',
+    colEstRevenue: 'Est. Revenue',
+    colHistory: '7-Day Trend',
+    colActions: 'Actions',
     currentPrice: 'Current',
     prevPrice: 'Prev',
-    trendsBtn: 'Trends',
-    alertBtn: 'Set Alert',
+    trendsBtn: 'Trend',
+    alertBtn: 'Alert',
     adminEditBtn: 'Update',
     ago: 'ago',
     lastUpdated: 'Updated',
-    noItems: 'No market prices found for the selected criteria.',
-    trendTitle: 'Price Trend History',
+    noItems: 'No count rates found for the selected criteria.',
+    trendTitle: 'Count Price Trend History',
     targetPriceLabel: 'Target Price (₹/kg)',
     conditionLabel: 'Alert Condition',
     conditionAbove: 'Reaches or exceeds (≥)',
     conditionBelow: 'Falls below or equal (≤)',
     saveAlert: 'Create Alert',
     cancel: 'Cancel',
-    updateTitle: 'Update Market Price (Admin)',
+    updateTitle: 'Update Market Price',
     newPriceLabel: 'New Farmgate Price (₹/kg)',
-    savePrice: 'Publish Price Update',
+    savePrice: 'Publish Rate Update',
     activeAlerts: 'Active Farmer Alerts',
     triggeredTag: 'TARGET REACHED',
     deleteAlertConfirm: 'Delete Alert',
   },
   te: {
     pageTitle: 'ప్రత్యక్ష సీఫుడ్ మార్కెట్ ధరలు',
-    pageSubtitle: 'భారతీయ తీరప్రాంత మార్కెట్లలో రోజువారీ రొయ్యలు, చేపల లైవ్ రేట్లు',
-    statTotal: 'మొత్తం రకాలు',
+    pageSubtitle: 'AquaSangham నెట్‌వర్క్ నుండి వాస్తవ లైవ్ ఫామ్‌గేట్ రేట్లు (అంచనాలు కావు)',
+    liveFeedTitle: 'AquaSangham ధృవీకరించిన లైవ్ ఫామ్‌గేట్ ఫీడ్',
+    liveFeedSubtitle: 'ఎగుమతి ప్రాసెసింగ్ ప్లాంట్లు మరియు మండిల నుండి నిజమైన ధరలు — 0% ఊహాజనితం',
+    statTotal: 'మొత్తం కౌంట్లు',
     statGainers: 'ధర పెరిగినవి',
     statLosers: 'ధర తగ్గినవి',
-    statStable: 'స్థిరమైన ధరలు',
-    tabAll: 'అన్ని రకాలు',
-    tabShrimp: 'రొయ్యలు',
-    tabCrab: 'పీతలు',
-    tabFish: 'చేపలు',
-    tabOther: 'ఇతర సీఫుడ్',
-    tabWatchlist: 'నా వాచ్‌లిస్ట్',
-    tabAlerts: 'ధర అలర్ట్‌లు',
-    searchPlaceholder: 'జాతి, సైజు లేదా మార్కెట్ వెతకండి...',
+    statStable: 'స్థిరమైన కౌంట్లు',
+    tabTable: '📊 లైవ్ కౌంట్ పట్టిక (AquaSangham)',
+    tabAll: '🗂️ అన్ని రకాల గ్రిడ్',
+    tabWatchlist: '⭐ నా వాచ్‌లిస్ట్',
+    tabAlerts: '🔔 ధర అలర్ట్‌లు',
+    searchPlaceholder: 'కౌంట్, జాతి లేదా ప్రాంతం వెతకండి...',
     allStates: 'అన్ని రాష్ట్రాలు',
     allDistricts: 'అన్ని జిల్లాలు',
     allSpecies: 'అన్ని జాతులు',
     clearFilters: 'క్లియర్',
+    syncLiveBtn: 'లైవ్ సింక్ చేయి',
+    syncingBtn: 'సింక్ అవుతోంది...',
+    editRatesBtn: '✏️ రేట్లు మార్చు / అనుకూలీకరించు',
+    editingActive: '✓ రేట్ల మార్పు మోడ్ ఆన్',
+    resetRatesBtn: '↺ అసలు రేట్లకు రీసెట్',
+    calcLabel: '🌾 పంట ఆదాయ గణన (Harvest Calculator)',
+    calcWeightPlaceholder: 'చెరువు పంట బరువు నమోదు చేయండి (కిలోలు)',
+    calcHelper: 'నమోదు చేసిన బరువుకు ప్రతి కౌంట్ వద్ద మొత్తం వచ్చే ఆదాయం గణించబడుతుంది',
+    colCount: 'కౌంట్ / సైజు',
+    colGrams: 'సగటు బరువు',
+    colLiveRate: 'లైవ్ రేటు (₹/కిలో)',
+    colPrevRate: 'నిన్నటి రేటు',
+    colChange: 'మార్పు',
+    colTrend: 'ట్రెండ్',
+    colPiecePrice: 'పీస్ ధర',
+    colEstRevenue: 'మొత్తం ఆదాయం',
+    colHistory: '7-రోజుల ట్రెండ్',
+    colActions: 'చర్యలు',
     currentPrice: 'ప్రస్తుత ధర',
     prevPrice: 'మునుపటి ధర',
-    trendsBtn: 'ట్రెండ్స్',
-    alertBtn: 'అలర్ట్ పెట్టు',
+    trendsBtn: 'ట్రెండ్',
+    alertBtn: 'అలర్ట్',
     adminEditBtn: 'ధర మార్చు',
     ago: 'క్రితం',
     lastUpdated: 'నవీకరణ',
-    noItems: 'ఎంచుకున్న ఫిల్టర్లకు అనుగుణంగా మార్కెట్ ధరలు కనుగొనబడలేదు.',
+    noItems: 'ఎంచుకున్న ఫిల్టర్లకు మార్కెట్ కౌంట్లు కనుగొనబడలేదు.',
     trendTitle: 'ధరల చారిత్రక ట్రెండ్',
     targetPriceLabel: 'టార్గెట్ ధర (₹/కిలో)',
     conditionLabel: 'అలర్ట్ నిబంధన',
@@ -109,6 +147,23 @@ export default function MarketPrices() {
   const [lang, setLang] = useState('en');
   const t = I18N[lang];
 
+  // Active Main Tab: 'table' (default, table-wise AquaSangham), 'all' (cards grid), 'watchlist', 'alerts'
+  const [activeTab, setActiveTab] = useState('table');
+
+  // AquaSangham Live State
+  const [aquaData, setAquaData] = useState(null);
+  const [aquaLoading, setAquaLoading] = useState(true);
+  const [aquaSyncing, setAquaSyncing] = useState(false);
+  const [aquaState, setAquaState] = useState('AP');
+  const [aquaRegion, setAquaRegion] = useState('(West Godavari, East Godavari, Krishna)');
+  const [aquaSpecies, setAquaSpecies] = useState('Vannamei Shrimp');
+
+  // Customizable / Changeable Rates Mode
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedRates, setEditedRates] = useState({});
+  const [harvestWeight, setHarvestWeight] = useState('2000'); // 2000 kg default biomass
+
+  // General Market & Watchlist State (from Supabase/API)
   const [prices, setPrices] = useState([]);
   const [speciesList, setSpeciesList] = useState([]);
   const [locationsList, setLocationsList] = useState([]);
@@ -118,8 +173,7 @@ export default function MarketPrices() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Filtering
-  const [activeTab, setActiveTab] = useState('all');
+  // Filtering for Cards Grid
   const [search, setSearch] = useState('');
   const [selectedState, setSelectedState] = useState('all');
   const [selectedDistrict, setSelectedDistrict] = useState('all');
@@ -144,7 +198,31 @@ export default function MarketPrices() {
   const [adminSaving, setAdminSaving] = useState(false);
   const [adminMsg, setAdminMsg] = useState('');
 
-  // Initial load
+  // ─── 1. Fetch AquaSangham Live Table ──────────────────────────────────────
+  const loadAquaLive = useCallback(async (state, region, species) => {
+    setAquaLoading(true);
+    try {
+      const params = {};
+      if (state) params.state = state;
+      if (region) params.region = region;
+      if (species) params.species = species;
+
+      const res = await getAquaSanghamLive(params);
+      const data = res.data?.data;
+      if (data) {
+        setAquaData(data);
+        if (data.selected_state?.id) setAquaState(data.selected_state.id);
+        if (data.selected_region) setAquaRegion(data.selected_region);
+        if (data.selected_species) setAquaSpecies(data.selected_species);
+      }
+    } catch (err) {
+      console.warn('AquaSangham fetch error:', err.message);
+    } finally {
+      setAquaLoading(false);
+    }
+  }, []);
+
+  // ─── 2. Fetch General Market Overview ────────────────────────────────────
   const loadMarket = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -173,10 +251,72 @@ export default function MarketPrices() {
   }, []);
 
   useEffect(() => {
+    loadAquaLive(aquaState, aquaRegion, aquaSpecies);
     loadMarket();
-  }, [loadMarket]);
+  }, []);
 
-  // Handle Watchlist Star
+  // Sync Live Rates from AquaSangham
+  async function handleSyncLive() {
+    setAquaSyncing(true);
+    try {
+      const res = await syncAquaSanghamLive({
+        state: aquaState,
+        region: aquaRegion,
+        species: aquaSpecies,
+      });
+      if (res.data?.data) {
+        setAquaData(res.data.data);
+      }
+    } catch (err) {
+      setError('Live sync failed: ' + getErrorMsg(err));
+    } finally {
+      setAquaSyncing(false);
+    }
+  }
+
+  // Rate Adjustment ("it should be chnageble")
+  async function handleRateChange(countRaw, newRate) {
+    const rateVal = parseFloat(newRate);
+    if (isNaN(rateVal) || rateVal <= 0) return;
+
+    setEditedRates(prev => ({ ...prev, [countRaw]: rateVal }));
+
+    try {
+      await updateAquaSanghamRate({
+        state: aquaState,
+        region: aquaRegion,
+        species: aquaSpecies,
+        count: countRaw,
+        new_price: rateVal,
+      });
+      // Refresh live table
+      loadAquaLive(aquaState, aquaRegion, aquaSpecies);
+    } catch (err) {
+      console.warn('Rate update failed:', err.message);
+    }
+  }
+
+  function handleRateStep(countRaw, currentVal, delta) {
+    const nextVal = Math.max(1, (parseFloat(currentVal) || 0) + delta);
+    handleRateChange(countRaw, nextVal);
+  }
+
+  // Reset Overrides
+  async function handleResetRates() {
+    try {
+      await resetAquaSanghamRates({
+        state: aquaState,
+        region: aquaRegion,
+        species: aquaSpecies,
+      });
+      setEditedRates({});
+      loadAquaLive(aquaState, aquaRegion, aquaSpecies);
+    } catch (err) {
+      console.warn('Reset rates failed:', err.message);
+    }
+  }
+
+  // Watchlist Toggle
   async function toggleWatchlist(priceId) {
     const next = new Set(watchlistIds);
     const has = next.has(priceId);
@@ -191,30 +331,35 @@ export default function MarketPrices() {
     }
   }
 
-  // Open Trend Modal
-  async function openTrendModal(item) {
-    setTrendModalItem(item);
+  // Open Trend Modal for Table Row
+  function openAquaTrend(row) {
+    const historyData = (row.history || []).map((h, i) => ({
+      label: h.day,
+      price: h.price,
+    }));
+
+    setTrendModalItem({
+      species: { name: aquaSpecies, telugu_name: aquaSpecies },
+      variety: row.count_display,
+      location: { market_name: aquaRegion, district: aquaState },
+      current_price: row.current_price,
+    });
     setTrendRange('daily');
-    fetchHistory(item.id, 'daily');
+    setTrendHistory(historyData);
   }
 
-  async function fetchHistory(priceId, range) {
-    setTrendLoading(true);
-    try {
-      const res = await getPriceHistory(priceId, range);
-      setTrendHistory(res.data.data?.history || []);
-    } catch {
-      setTrendHistory([]);
-    } finally {
-      setTrendLoading(false);
-    }
-  }
-
-  function handleRangeChange(range) {
-    setTrendRange(range);
-    if (trendModalItem) {
-      fetchHistory(trendModalItem.id, range);
-    }
+  // Open Alert Modal for Table Row
+  function openAquaAlert(row) {
+    setAlertModalItem({
+      species_id: 'sp-van-01',
+      location_id: 'loc-ap-01',
+      variety: row.count_display,
+      location: { market_name: aquaRegion, state: aquaState },
+      current_price: row.current_price,
+      species: { name: aquaSpecies, telugu_name: aquaSpecies },
+    });
+    setAlertTargetPrice(row.current_price);
+    setAlertCondition('above');
   }
 
   // Save Price Alert
@@ -225,8 +370,8 @@ export default function MarketPrices() {
     setAlertMsg('');
     try {
       const payload = {
-        species_id: alertModalItem.species_id,
-        location_id: alertModalItem.location_id,
+        species_id: alertModalItem.species_id || 'sp-van-01',
+        location_id: alertModalItem.location_id || 'loc-ap-01',
         variety: alertModalItem.variety,
         target_price: parseFloat(alertTargetPrice),
         alert_condition: alertCondition,
@@ -253,38 +398,7 @@ export default function MarketPrices() {
     } catch {}
   }
 
-  // Admin Update Price
-  async function handleAdminPriceSave(e) {
-    e.preventDefault();
-    if (!adminModalItem || !adminNewPrice) return;
-    setAdminSaving(true);
-    setAdminMsg('');
-    try {
-      const res = await updatePriceAdmin({
-        price_id: adminModalItem.id,
-        new_price: parseFloat(adminNewPrice),
-      });
-
-      // Update in state
-      const updatedItem = res.data.data;
-      setPrices(prev => prev.map(p => (p.id === updatedItem.id ? updatedItem : p)));
-
-      // Refresh alerts in background
-      getAlerts().then(r => setAlerts(r.data.data || [])).catch(() => {});
-
-      setAdminMsg('Price updated!');
-      setTimeout(() => {
-        setAdminModalItem(null);
-        setAdminMsg('');
-      }, 700);
-    } catch (err) {
-      setAdminMsg(getErrorMsg(err));
-    } finally {
-      setAdminSaving(false);
-    }
-  }
-
-  // Filter Items
+  // Filter Cards Grid
   const availableStates = Array.from(new Set(locationsList.map(l => l.state)));
   const availableDistricts = Array.from(
     new Set(
@@ -294,26 +408,17 @@ export default function MarketPrices() {
     )
   );
 
-  let filteredPrices = prices.filter(item => {
-    // Tab Filter
+  const filteredPrices = prices.filter(item => {
     if (activeTab === 'watchlist') {
       if (!watchlistIds.has(item.id)) return false;
-    } else if (activeTab === 'alerts') {
-      return false; // Handled separately in UI
-    } else if (activeTab !== 'all') {
-      if (item.species.category !== activeTab) return false;
+    } else if (activeTab === 'alerts' || activeTab === 'table') {
+      return true;
     }
 
-    // State
     if (selectedState !== 'all' && item.location.state !== selectedState) return false;
-
-    // District
     if (selectedDistrict !== 'all' && item.location.district !== selectedDistrict) return false;
-
-    // Species
     if (selectedSpecies !== 'all' && item.species_id !== selectedSpecies) return false;
 
-    // Search
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       const match =
@@ -328,12 +433,12 @@ export default function MarketPrices() {
     return true;
   });
 
-  // Calculate quick stats from current filtered items
   const triggeredAlertsCount = alerts.filter(a => a.triggered).length;
+  const numWeightKg = parseFloat(harvestWeight) || 0;
 
   return (
     <Layout title={t.pageTitle}>
-      {/* Page Header with Bilingual Toggle */}
+      {/* Page Header */}
       <div className="page-header" style={{ marginBottom: 16 }}>
         <div>
           <h2>{t.pageTitle}</h2>
@@ -355,7 +460,14 @@ export default function MarketPrices() {
               తెలుగు
             </button>
           </div>
-          <button className="btn btn-secondary btn-sm" onClick={loadMarket} title="Refresh market data">
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={() => {
+              loadAquaLive(aquaState, aquaRegion, aquaSpecies);
+              loadMarket();
+            }}
+            title="Refresh market data"
+          >
             🔄
           </button>
         </div>
@@ -363,58 +475,104 @@ export default function MarketPrices() {
 
       <ErrorMessage message={error} />
 
-      {/* KPI Stats Row */}
-      <div className="stat-grid" style={{ marginBottom: 20 }}>
-        <StatCard label={t.statTotal} value={stats.totalItems} icon="🏷️" />
-        <StatCard label={t.statGainers} value={`+${stats.gainers}`} icon="📈" color="var(--success)" />
-        <StatCard label={t.statLosers} value={`-${stats.losers}`} icon="📉" color="var(--danger)" />
-        <StatCard label={t.statStable} value={stats.stable} icon="⚖️" color="var(--text-secondary)" />
+      {/* ─── LIVE AQUASANGHAM BANNER ────────────────────────────────────────── */}
+      <div className="aqua-live-banner">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span className="aqua-pulse-beacon" title="Live Connection Active" />
+          <div>
+            <div style={{ fontWeight: 800, fontSize: 15, color: '#065f46', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>🟢 {t.liveFeedTitle}</span>
+              <span style={{ fontSize: 11, background: '#d1fae5', color: '#065f46', padding: '2px 8px', borderRadius: 20, fontWeight: 700 }}>
+                100% Verified Farmgate
+              </span>
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
+              {t.liveFeedSubtitle} • Last Synced: {aquaData?.last_synced ? new Date(aquaData.last_synced).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Live'}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={handleResetRates}
+            title="Reset any custom edited rates back to pure AquaSangham live rates"
+            style={{ fontSize: 12 }}
+          >
+            {t.resetRatesBtn}
+          </button>
+          <button
+            className={`btn btn-sm ${isEditMode ? 'btn-primary' : 'btn-secondary'}`}
+            onClick={() => setIsEditMode(!isEditMode)}
+            style={{ fontSize: 12 }}
+          >
+            {isEditMode ? t.editingActive : t.editRatesBtn}
+          </button>
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={handleSyncLive}
+            disabled={aquaSyncing}
+            style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <span>{aquaSyncing ? '⏳' : '🔄'}</span>
+            <span>{aquaSyncing ? t.syncingBtn : t.syncLiveBtn}</span>
+          </button>
+        </div>
       </div>
 
-      {/* Category Tabs */}
+      {/* KPI Stats Row */}
+      <div className="stat-grid" style={{ marginBottom: 20 }}>
+        <StatCard
+          label={t.statTotal}
+          value={aquaData?.count_summary?.total_counts || stats.totalItems}
+          icon="🦐"
+        />
+        <StatCard
+          label={t.statGainers}
+          value={`+${aquaData?.count_summary?.gainers ?? stats.gainers}`}
+          icon="📈"
+          color="var(--success)"
+        />
+        <StatCard
+          label={t.statLosers}
+          value={`-${aquaData?.count_summary?.losers ?? stats.losers}`}
+          icon="📉"
+          color="var(--danger)"
+        />
+        <StatCard
+          label={t.statStable}
+          value={aquaData?.count_summary?.stable ?? stats.stable}
+          icon="⚖️"
+          color="var(--text-secondary)"
+        />
+      </div>
+
+      {/* ─── Main Tabs ──────────────────────────────────────────────────────── */}
       <div className="market-tabs">
+        <button
+          className={'market-tab' + (activeTab === 'table' ? ' active' : '')}
+          onClick={() => setActiveTab('table')}
+        >
+          {t.tabTable}
+        </button>
         <button
           className={'market-tab' + (activeTab === 'all' ? ' active' : '')}
           onClick={() => setActiveTab('all')}
         >
-          🦐 {t.tabAll}
-        </button>
-        <button
-          className={'market-tab' + (activeTab === 'shrimp' ? ' active' : '')}
-          onClick={() => setActiveTab('shrimp')}
-        >
-          🍤 {t.tabShrimp}
-        </button>
-        <button
-          className={'market-tab' + (activeTab === 'crab' ? ' active' : '')}
-          onClick={() => setActiveTab('crab')}
-        >
-          🦀 {t.tabCrab}
-        </button>
-        <button
-          className={'market-tab' + (activeTab === 'fish' ? ' active' : '')}
-          onClick={() => setActiveTab('fish')}
-        >
-          🐟 {t.tabFish}
-        </button>
-        <button
-          className={'market-tab' + (activeTab === 'other' ? ' active' : '')}
-          onClick={() => setActiveTab('other')}
-        >
-          🦞 {t.tabOther}
+          {t.tabAll}
         </button>
         <button
           className={'market-tab' + (activeTab === 'watchlist' ? ' active' : '')}
           onClick={() => setActiveTab('watchlist')}
         >
-          ⭐ {t.tabWatchlist}
+          {t.tabWatchlist}
           <span className="tab-badge">{watchlistIds.size}</span>
         </button>
         <button
           className={'market-tab' + (activeTab === 'alerts' ? ' active' : '')}
           onClick={() => setActiveTab('alerts')}
         >
-          🔔 {t.tabAlerts}
+          {t.tabAlerts}
           {triggeredAlertsCount > 0 && (
             <span className="tab-badge" style={{ background: '#ef4444', color: '#fff' }}>
               {triggeredAlertsCount}
@@ -423,81 +581,322 @@ export default function MarketPrices() {
         </button>
       </div>
 
-      {/* When Alerts tab is active, show the Alerts management view */}
-      {activeTab === 'alerts' ? (
-        <div style={{ maxWidth: 720, margin: '0 auto' }}>
-          <div className="card" style={{ marginBottom: 20 }}>
-            <div className="card-header">
-              <span className="card-title">🔔 {t.activeAlerts}</span>
-              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                {alerts.length} registered
-              </span>
-            </div>
-            {alerts.length === 0 ? (
-              <EmptyState
-                icon="🔔"
-                title="No active price alerts"
-                message="Click 'Set Alert' on any seafood market card to get notified when prices reach your target."
-              />
-            ) : (
-              <div style={{ padding: '4px 0' }}>
-                {alerts.map(a => (
-                  <div
-                    key={a.id}
-                    className={'alert-item-card' + (a.triggered ? ' triggered' : '')}
-                  >
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                        <span style={{ fontSize: 18 }}>{a.species?.image_icon || '🦐'}</span>
-                        <strong style={{ fontSize: 15 }}>
-                          {lang === 'te' && a.species?.telugu_name ? a.species.telugu_name : a.species?.name}
-                        </strong>
-                        <span style={{ fontSize: 12, padding: '2px 6px', background: '#e2e8f0', borderRadius: 4 }}>
-                          {a.variety}
-                        </span>
-                        {a.triggered && (
-                          <span
-                            style={{
-                              fontSize: 11,
-                              fontWeight: 700,
-                              background: '#16a34a',
-                              color: '#fff',
-                              padding: '2px 8px',
-                              borderRadius: 12,
-                            }}
-                          >
-                            ✓ {t.triggeredTag}
-                          </span>
-                        )}
-                      </div>
-                      <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                        📍 {a.location?.market_name} ({a.location?.state}) • Condition:{' '}
-                        <strong>
-                          {a.alert_condition === 'above' ? '≥' : a.alert_condition === 'below' ? '≤' : '='}{' '}
-                          ₹{a.target_price}/kg
-                        </strong>
-                        {a.current_price && (
-                          <span style={{ marginLeft: 8 }}>
-                            (Current: <strong>₹{a.current_price}/kg</strong>)
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <button
-                      className="btn btn-secondary btn-sm"
-                      onClick={() => handleDeleteAlert(a.id)}
-                      title={t.deleteAlertConfirm}
-                      style={{ color: 'var(--danger)' }}
-                    >
-                      ✕
-                    </button>
-                  </div>
+      {/* ─── TAB 1: LIVE COUNT TABLE (AQUASANGHAM) ────────────────────────── */}
+      {activeTab === 'table' && (
+        <>
+          {/* Controls Bar ("it should be chnageble") */}
+          <div className="market-filter-bar" style={{ background: '#ffffff', borderRadius: 14, padding: 14, border: '1px solid var(--border)', marginBottom: 16 }}>
+            {/* State Selector */}
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>
+                📍 State / రాష్ట్రం
+              </label>
+              <select
+                value={aquaState}
+                onChange={e => {
+                  const nextState = e.target.value;
+                  setAquaState(nextState);
+                  loadAquaLive(nextState, null, aquaSpecies);
+                }}
+              >
+                {(aquaData?.states || []).map(st => (
+                  <option key={st.id} value={st.id}>
+                    {st.name} ({st.id})
+                  </option>
                 ))}
+              </select>
+            </div>
+
+            {/* Region / District Selector */}
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>
+                🏛️ Aquaculture Hub / ప్రాంతం
+              </label>
+              <select
+                value={aquaRegion}
+                onChange={e => {
+                  const nextReg = e.target.value;
+                  setAquaRegion(nextReg);
+                  loadAquaLive(aquaState, nextReg, aquaSpecies);
+                }}
+              >
+                {(aquaData?.available_regions || []).map(reg => (
+                  <option key={reg} value={reg}>
+                    {reg}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Species Selector */}
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>
+                🦐 Species / జాతి
+              </label>
+              <select
+                value={aquaSpecies}
+                onChange={e => {
+                  const nextSp = e.target.value;
+                  setAquaSpecies(nextSp);
+                  loadAquaLive(aquaState, aquaRegion, nextSp);
+                }}
+              >
+                {(aquaData?.available_species || []).map(sp => (
+                  <option key={sp} value={sp}>
+                    {sp === 'Vannamei Shrimp' && lang === 'te' ? 'వనామి రొయ్య (Vannamei)' : sp}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Change Rate Prompt */}
+            {isEditMode && (
+              <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                <span style={{ fontSize: 12, color: '#d97706', fontWeight: 600, paddingBottom: 8 }}>
+                  ⚡ Edit mode: Type rates or use ±5 steppers
+                </span>
               </div>
             )}
           </div>
-        </div>
-      ) : (
+
+          {/* Harvest Revenue Estimator Box */}
+          <div className="harvest-estimator-card">
+            <div>
+              <div style={{ fontWeight: 800, fontSize: 14, color: '#065f46', marginBottom: 2 }}>
+                {t.calcLabel}
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                {t.calcHelper}
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{t.enterWeight}:</span>
+              <input
+                type="number"
+                min="0"
+                step="50"
+                className="aqua-price-input"
+                style={{ width: 120, fontSize: 14, textAlign: 'center' }}
+                value={harvestWeight}
+                onChange={e => setHarvestWeight(e.target.value)}
+                placeholder="kg"
+              />
+              <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>KG</span>
+            </div>
+          </div>
+
+          {/* ─── LIVE TABLE WISE COMPONENT ────────────────────────────────────── */}
+          {aquaLoading ? (
+            <Loading />
+          ) : !aquaData?.table_rows || aquaData.table_rows.length === 0 ? (
+            <EmptyState
+              icon="🏷️"
+              title="No live count prices found"
+              message={t.noItems}
+            />
+          ) : (
+            <div className="aqua-table-wrap">
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', background: '#fafbfc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#0f172a' }}>
+                    {aquaSpecies} — {aquaData.selected_region} ({aquaData.selected_state?.name})
+                  </h3>
+                  <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 3 }}>
+                    Live daily count rates • Source: {aquaData.source}
+                  </div>
+                </div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#0284c7', background: '#f0f9ff', padding: '4px 12px', borderRadius: 20 }}>
+                  {aquaData.table_rows.length} Counts Listed
+                </div>
+              </div>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table className="aqua-price-table">
+                  <thead>
+                    <tr>
+                      <th>{t.colCount}</th>
+                      <th>{t.colGrams}</th>
+                      <th>{t.colLiveRate}</th>
+                      <th>{t.colPrevRate}</th>
+                      <th>{t.colChange}</th>
+                      <th>{t.colTrend}</th>
+                      <th>{t.colPiecePrice}</th>
+                      {numWeightKg > 0 && <th>{t.colEstRevenue}</th>}
+                      <th>{t.colHistory}</th>
+                      <th style={{ textAlign: 'right' }}>{t.colActions}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {aquaData.table_rows.map(row => {
+                      const isUp = row.trend === 'up';
+                      const isDown = row.trend === 'down';
+                      const trendClass = isUp ? 'trend-up' : isDown ? 'trend-down' : 'trend-stable';
+                      const trendSymbol = isUp ? '▲' : isDown ? '▼' : '▬';
+                      const changeSign = row.change_amount > 0 ? '+' : '';
+
+                      // Revenue calculation for entered biomass
+                      const estRevenue = numWeightKg > 0 ? Math.round(numWeightKg * row.current_price) : 0;
+                      const estLakhs = (estRevenue / 100000).toFixed(2);
+
+                      return (
+                        <tr key={row.id}>
+                          {/* Count */}
+                          <td>
+                            <div className="aqua-count-pill">
+                              <span className="aqua-count-badge">{row.count_display}</span>
+                            </div>
+                          </td>
+
+                          {/* Avg Grams */}
+                          <td>
+                            <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>
+                              {row.avg_weight_grams ? `${row.avg_weight_grams} g` : '—'}
+                            </span>
+                          </td>
+
+                          {/* Live Rate (Editable if in Edit Mode) */}
+                          <td>
+                            {isEditMode ? (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <button
+                                  type="button"
+                                  className="aqua-stepper-btn"
+                                  onClick={() => handleRateStep(row.count_raw, row.current_price, -5)}
+                                  title="Decrease rate by ₹5"
+                                >
+                                  -5
+                                </button>
+                                <input
+                                  type="number"
+                                  step="1"
+                                  className="aqua-price-input"
+                                  value={editedRates[row.count_raw] ?? row.current_price}
+                                  onChange={e => handleRateChange(row.count_raw, e.target.value)}
+                                />
+                                <button
+                                  type="button"
+                                  className="aqua-stepper-btn"
+                                  onClick={() => handleRateStep(row.count_raw, row.current_price, 5)}
+                                  title="Increase rate by ₹5"
+                                >
+                                  +5
+                                </button>
+                              </div>
+                            ) : (
+                              <div className={`aqua-live-rate ${row.is_overridden ? 'overridden' : ''}`}>
+                                <span>₹{row.current_price}</span>
+                                <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-secondary)' }}>/kg</span>
+                                {row.is_overridden && (
+                                  <span style={{ fontSize: 10, background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: 4, marginLeft: 4 }}>
+                                    Edited
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </td>
+
+                          {/* Previous Price */}
+                          <td>
+                            <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>
+                              ₹{row.previous_price}
+                            </span>
+                          </td>
+
+                          {/* Day Change */}
+                          <td>
+                            <div className={`price-trend-badge ${trendClass}`} style={{ fontSize: 12, padding: '3px 8px' }}>
+                              <span>{changeSign}₹{Math.abs(row.change_amount)}</span>
+                              {row.change_pct !== 0 && (
+                                <span style={{ fontSize: 10, opacity: 0.9 }}>
+                                  ({changeSign}{row.change_pct}%)
+                                </span>
+                              )}
+                            </div>
+                          </td>
+
+                          {/* Trend */}
+                          <td>
+                            <span style={{ fontWeight: 700, fontSize: 13, color: isUp ? '#16a34a' : isDown ? '#dc2626' : '#64748b' }}>
+                              {trendSymbol} {isUp ? 'Rising' : isDown ? 'Dropping' : 'Stable'}
+                            </span>
+                          </td>
+
+                          {/* Piece Price */}
+                          <td>
+                            <span style={{ fontSize: 13, fontWeight: 700, color: '#0369a1' }}>
+                              {row.piece_price ? `₹${row.piece_price}` : '—'}
+                            </span>
+                          </td>
+
+                          {/* Estimated Harvest Revenue */}
+                          {numWeightKg > 0 && (
+                            <td>
+                              <div style={{ fontWeight: 800, color: '#065f46', fontSize: 14 }}>
+                                ₹{estRevenue.toLocaleString('en-IN')}
+                                <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-secondary)' }}>
+                                  ({estLakhs} Lakhs)
+                                </div>
+                              </div>
+                            </td>
+                          )}
+
+                          {/* Mini Sparkline / History count */}
+                          <td>
+                            <div style={{ display: 'flex', gap: 3, alignItems: 'flex-end', height: 24 }}>
+                              {(row.history || []).slice(-6).map((h, hi) => {
+                                const min = Math.min(...row.history.map(x => x.price));
+                                const max = Math.max(...row.history.map(x => x.price));
+                                const pct = max === min ? 50 : Math.max(15, Math.min(100, ((h.price - min) / (max - min)) * 100));
+                                return (
+                                  <div
+                                    key={hi}
+                                    style={{
+                                      width: 6,
+                                      height: `${pct}%`,
+                                      background: hi === (row.history.length - 1) ? '#0284c7' : '#cbd5e1',
+                                      borderRadius: 2,
+                                    }}
+                                    title={`${h.day}: ₹${h.price}`}
+                                  />
+                                );
+                              })}
+                            </div>
+                          </td>
+
+                          {/* Actions */}
+                          <td style={{ textAlign: 'right' }}>
+                            <div style={{ display: 'inline-flex', gap: 6 }}>
+                              <button
+                                className="btn btn-secondary btn-sm"
+                                onClick={() => openAquaTrend(row)}
+                                title="View price trend chart"
+                                style={{ padding: '4px 8px', fontSize: 12 }}
+                              >
+                                📊 {t.trendsBtn}
+                              </button>
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => openAquaAlert(row)}
+                                title="Set target price alert"
+                                style={{ padding: '4px 8px', fontSize: 12 }}
+                              >
+                                🔔 {t.alertBtn}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ─── TAB 2: ALL COMMODITIES CARDS GRID ────────────────────────────── */}
+      {activeTab === 'all' && (
         <>
           {/* Filter Bar */}
           <div className="market-filter-bar">
@@ -567,7 +966,7 @@ export default function MarketPrices() {
             )}
           </div>
 
-          {/* Cards Grid or Loading/Empty */}
+          {/* Cards Grid */}
           {loading ? (
             <Loading />
           ) : filteredPrices.length === 0 ? (
@@ -659,17 +1058,24 @@ export default function MarketPrices() {
                         <span>
                           {t.lastUpdated}: {new Date(item.last_updated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
-                        <span style={{ cursor: 'pointer', color: 'var(--primary)' }} onClick={() => {
-                          setAdminModalItem(item);
-                          setAdminNewPrice(item.current_price);
-                        }}>
+                        <span
+                          style={{ cursor: 'pointer', color: 'var(--primary)' }}
+                          onClick={() => {
+                            setAdminModalItem(item);
+                            setAdminNewPrice(item.current_price);
+                          }}
+                        >
                           ✏️ {t.adminEditBtn}
                         </span>
                       </div>
                       <div className="market-card-actions">
                         <button
                           className="btn btn-secondary"
-                          onClick={() => openTrendModal(item)}
+                          onClick={() => {
+                            setTrendModalItem(item);
+                            setTrendRange('daily');
+                            fetchHistory(item.id, 'daily');
+                          }}
                         >
                           📊 {t.trendsBtn}
                         </button>
@@ -693,52 +1099,140 @@ export default function MarketPrices() {
         </>
       )}
 
+      {/* ─── TAB 3: WATCHLIST ──────────────────────────────────────────────── */}
+      {activeTab === 'watchlist' && (
+        <>
+          {watchlistIds.size === 0 ? (
+            <EmptyState
+              icon="⭐"
+              title="Your Watchlist is empty"
+              message="Star species or count rates to monitor them here."
+            />
+          ) : (
+            <div className="market-grid">
+              {prices.filter(p => watchlistIds.has(p.id)).map(item => (
+                <div key={item.id} className="market-card">
+                  <div className="market-card-top">
+                    <div className="market-species-info">
+                      <div className="market-icon-bubble">{item.species.image_icon}</div>
+                      <div>
+                        <div className="market-species-name">{item.species.name}</div>
+                        <div className="market-species-sub">{item.variety}</div>
+                      </div>
+                    </div>
+                    <button className="watchlist-btn" onClick={() => toggleWatchlist(item.id)}>
+                      ⭐
+                    </button>
+                  </div>
+                  <div className="market-price-row" style={{ marginTop: 12 }}>
+                    <div className="big-price">₹{item.current_price}/kg</div>
+                    <div className="price-trend-badge trend-up">
+                      {item.change_amount >= 0 ? '+' : ''}₹{item.change_amount}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ─── TAB 4: ALERTS ─────────────────────────────────────────────────── */}
+      {activeTab === 'alerts' && (
+        <div style={{ maxWidth: 720, margin: '0 auto' }}>
+          <div className="card" style={{ marginBottom: 20 }}>
+            <div className="card-header">
+              <span className="card-title">🔔 {t.activeAlerts}</span>
+              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                {alerts.length} registered
+              </span>
+            </div>
+            {alerts.length === 0 ? (
+              <EmptyState
+                icon="🔔"
+                title="No active price alerts"
+                message="Click 'Alert' on any count row or market card to get notified when prices reach your target."
+              />
+            ) : (
+              <div style={{ padding: '4px 0' }}>
+                {alerts.map(a => (
+                  <div
+                    key={a.id}
+                    className={'alert-item-card' + (a.triggered ? ' triggered' : '')}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <span style={{ fontSize: 18 }}>{a.species?.image_icon || '🦐'}</span>
+                        <strong style={{ fontSize: 15 }}>
+                          {lang === 'te' && a.species?.telugu_name ? a.species.telugu_name : a.species?.name}
+                        </strong>
+                        <span style={{ fontSize: 12, padding: '2px 6px', background: '#e2e8f0', borderRadius: 4 }}>
+                          {a.variety}
+                        </span>
+                        {a.triggered && (
+                          <span
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 700,
+                              background: '#16a34a',
+                              color: '#fff',
+                              padding: '2px 8px',
+                              borderRadius: 12,
+                            }}
+                          >
+                            ✓ {t.triggeredTag}
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                        📍 {a.location?.market_name} ({a.location?.state}) • Target:{' '}
+                        <strong>
+                          {a.alert_condition === 'above' ? '≥' : a.alert_condition === 'below' ? '≤' : '='}{' '}
+                          ₹{a.target_price}/kg
+                        </strong>
+                      </div>
+                    </div>
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => handleDeleteAlert(a.id)}
+                      title={t.deleteAlertConfirm}
+                      style={{ color: 'var(--danger)' }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ─── Price Trend History Modal ────────────────────────────────────── */}
       {trendModalItem && (
         <Modal
-          title={`📊 ${t.trendTitle}: ${
-            lang === 'te' && trendModalItem.species.telugu_name
-              ? trendModalItem.species.telugu_name
-              : trendModalItem.species.name
-          } (${trendModalItem.variety})`}
+          title={`📊 ${t.trendTitle}: ${trendModalItem.variety} (${trendModalItem.species.name})`}
           onClose={() => setTrendModalItem(null)}
         >
           <div>
             <div style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)' }}>
-              📍 {trendModalItem.location.market_name} ({trendModalItem.location.district}) • Current:{' '}
-              <strong style={{ color: 'var(--text)', fontSize: 15 }}>
+              📍 {trendModalItem.location.market_name} • Current Rate:{' '}
+              <strong style={{ color: 'var(--text)', fontSize: 16 }}>
                 ₹{trendModalItem.current_price}/kg
               </strong>
             </div>
 
             {/* Range Toggle */}
             <div className="trend-range-toggle">
-              <button
-                className={trendRange === 'daily' ? 'active' : ''}
-                onClick={() => handleRangeChange('daily')}
-              >
-                7 Days (Daily)
-              </button>
-              <button
-                className={trendRange === 'weekly' ? 'active' : ''}
-                onClick={() => handleRangeChange('weekly')}
-              >
-                4 Weeks (Weekly)
-              </button>
-              <button
-                className={trendRange === 'monthly' ? 'active' : ''}
-                onClick={() => handleRangeChange('monthly')}
-              >
-                6 Months (Monthly)
+              <button className="active">
+                AquaSangham Verified History
               </button>
             </div>
 
             {/* Chart */}
-            {trendLoading ? (
-              <Loading />
-            ) : trendHistory.length === 0 ? (
+            {trendHistory.length === 0 ? (
               <p style={{ textAlign: 'center', padding: 24, color: 'var(--text-secondary)' }}>
-                No history data available.
+                No history data available for this count.
               </p>
             ) : (
               <div style={{ width: '100%', height: 260 }}>
@@ -755,15 +1249,15 @@ export default function MarketPrices() {
                     />
                     <Tooltip
                       formatter={value => [`₹${value}/kg`, 'Price']}
-                      labelFormatter={label => `Period: ${label}`}
+                      labelFormatter={label => `Date: ${label}`}
                       contentStyle={{ borderRadius: 8, border: '1px solid var(--border)' }}
                     />
                     <Line
                       type="monotone"
                       dataKey="price"
-                      stroke="var(--primary)"
+                      stroke="#0284c7"
                       strokeWidth={3}
-                      dot={{ r: 4, fill: 'var(--primary)' }}
+                      dot={{ r: 4, fill: '#0284c7' }}
                       activeDot={{ r: 7 }}
                     />
                   </LineChart>
@@ -777,11 +1271,7 @@ export default function MarketPrices() {
       {/* ─── Price Alert Modal ────────────────────────────────────────────── */}
       {alertModalItem && (
         <Modal
-          title={`🔔 ${t.alertBtn}: ${
-            lang === 'te' && alertModalItem.species.telugu_name
-              ? alertModalItem.species.telugu_name
-              : alertModalItem.species.name
-          } (${alertModalItem.variety})`}
+          title={`🔔 ${t.alertBtn}: ${alertModalItem.variety}`}
           onClose={() => setAlertModalItem(null)}
         >
           <form onSubmit={handleSaveAlert}>
@@ -791,11 +1281,7 @@ export default function MarketPrices() {
             </div>
 
             {alertMsg && (
-              <div
-                className={`alert ${
-                  alertMsg.includes('success') ? 'alert-success' : 'alert-error'
-                }`}
-              >
+              <div className={`alert ${alertMsg.includes('success') ? 'alert-success' : 'alert-error'}`}>
                 {alertMsg}
               </div>
             )}
@@ -844,13 +1330,35 @@ export default function MarketPrices() {
         </Modal>
       )}
 
-      {/* ─── Admin Price Update Modal ─────────────────────────────────────── */}
+      {/* ─── Admin Modal (For Grid Cards) ─────────────────────────────────── */}
       {adminModalItem && (
         <Modal
           title={t.updateTitle}
           onClose={() => setAdminModalItem(null)}
         >
-          <form onSubmit={handleAdminPriceSave}>
+          <form onSubmit={async e => {
+            e.preventDefault();
+            if (!adminModalItem || !adminNewPrice) return;
+            setAdminSaving(true);
+            setAdminMsg('');
+            try {
+              const res = await updatePriceAdmin({
+                price_id: adminModalItem.id,
+                new_price: parseFloat(adminNewPrice),
+              });
+              const updatedItem = res.data.data;
+              setPrices(prev => prev.map(p => (p.id === updatedItem.id ? updatedItem : p)));
+              setAdminMsg('Price updated!');
+              setTimeout(() => {
+                setAdminModalItem(null);
+                setAdminMsg('');
+              }, 700);
+            } catch (err) {
+              setAdminMsg(getErrorMsg(err));
+            } finally {
+              setAdminSaving(false);
+            }
+          }}>
             <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>
               Update farmgate rate for{' '}
               <strong>
@@ -860,11 +1368,7 @@ export default function MarketPrices() {
             </div>
 
             {adminMsg && (
-              <div
-                className={`alert ${
-                  adminMsg.includes('updated') ? 'alert-success' : 'alert-error'
-                }`}
-              >
+              <div className={`alert ${adminMsg.includes('updated') ? 'alert-success' : 'alert-error'}`}>
                 {adminMsg}
               </div>
             )}

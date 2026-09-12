@@ -46,13 +46,17 @@ router.post(
 
 router.delete('/alerts/:alertId', marketController.deleteAlert);
 
-// ─── Admin Price Updates ─────────────────────────────────────────────────────
-router.put(
-  '/admin/price',
+// ─── AquaSangham Live Table Endpoints ────────────────────────────────────────
+router.get('/aquasangham/live', marketController.getAquaSanghamLive);
+router.post('/aquasangham/sync', marketController.syncAquaSanghamLive);
+router.post(
+  '/aquasangham/update-rate',
   [
-    body('new_price').isFloat({ min: 0.1 }).withMessage('A valid positive price is required.'),
+    body('count').notEmpty().withMessage('Count identifier is required.'),
+    body('new_price').isFloat({ min: 1 }).withMessage('Valid positive rate is required.'),
   ],
-  marketController.updatePriceAdmin
+  marketController.updateAquaSanghamRate
 );
+router.post('/aquasangham/reset-rates', marketController.resetAquaSanghamRates);
 
 module.exports = router;
