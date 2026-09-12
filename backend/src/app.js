@@ -55,6 +55,8 @@ const suppliesRoutes = require('./routes/supplies.routes');
 
 const seafoodRoutes = require('./routes/seafood.routes');
 
+const dashboardRoutes = require('./routes/dashboard.routes');
+
 
 const app = express();
 
@@ -154,6 +156,8 @@ app.use('/api/consultations', consultationRoutes);
 app.use('/api/supplies', suppliesRoutes);
 
 app.use('/api/seafood', seafoodRoutes);
+
+app.use('/api/dashboard', dashboardRoutes);
 
 
 // ─── Root Route ──────────────────────────────────────────────────────────────
