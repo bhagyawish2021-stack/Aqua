@@ -699,6 +699,102 @@ tbody tr:hover { background: #f8fafc; }
   gap: 16px;
 }
 
+/* ─── Dynamic Machinery Marketplace Extras ───────────────────────────────── */
+.live-activity-ticker {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.live-ticker-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  flex-shrink: 0;
+  animation: aquaPulse 2s infinite;
+}
+
+.eq-badge-pill {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+.eq-badge-pill.hot {
+  background: #ef4444; color: #fff;
+}
+.eq-badge-pill.verified {
+  background: #0284c7; color: #fff;
+}
+.eq-badge-pill.distress {
+  background: #f59e0b; color: #fff;
+}
+.eq-badge-pill.top {
+  background: #8b5cf6; color: #fff;
+}
+.eq-badge-pill.new {
+  background: #10b981; color: #fff;
+}
+
+.live-viewers-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0284c7;
+  background: #f0f9ff;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid #bae6fd;
+}
+.inquiries-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #b45309;
+  background: #fef3c7;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid #fde68a;
+}
+
+.delivery-calc-card {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin: 16px 0;
+}
+.emi-calc-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #166534;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0;
+}
+
+
 
 
 

@@ -39,8 +39,9 @@ router.put('/:id', equipmentController.updateListing);
 router.patch('/:id/status', equipmentController.markListingStatus);
 router.delete('/:id', equipmentController.deleteListing);
 
-// ─── Favorites & Trust ───────────────────────────────────────────────────────
+// ─── Favorites, Trust & Inquiries ──────────────────────────────────────────
 router.post('/:id/favorite', equipmentController.toggleFavorite);
+router.post('/:id/inquire', equipmentController.recordInquiry);
 
 router.post(
   '/reviews',

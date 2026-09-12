@@ -32,3 +32,7 @@ export const submitReview = (data) =>
 
 export const submitReport = (data) =>
   api.post('/api/equipment/reports', data);
+
+export const recordInquiry = (id) =>
+  api.post(`/api/equipment/${id}/inquire`);
+

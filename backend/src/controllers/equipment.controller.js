@@ -220,6 +220,22 @@ async function submitReport(req, res, next) {
   }
 }
 
+/**
+ * POST /api/equipment/:id/inquire
+ */
+async function recordInquiry(req, res, next) {
+  try {
+    const { id } = req.params;
+    const userName = req.user?.name || 'Farmer';
+    const userPhone = req.user?.phone || '';
+    const result = await equipmentService.recordInquiry(id, userName, userPhone);
+    if (!result) return next(new ApiError(404, 'Equipment listing not found.'));
+    res.status(200).json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getCategories,
   getListings,
@@ -232,4 +248,5 @@ module.exports = {
   toggleFavorite,
   submitReview,
   submitReport,
+  recordInquiry,
 };
