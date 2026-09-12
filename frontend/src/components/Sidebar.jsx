@@ -10,6 +10,7 @@ const links = [
   { to: '/disease-monitoring', icon: '🔬', label: 'Disease Screening' },
   { to: '/prevention',         icon: '🛡️', label: 'Health & Prevention' },
   { to: '/consultations',      icon: '👨‍⚕️', label: 'Expert Advisory' },
+  { to: '/supplies',           icon: '💊', label: 'Medicines & Supplies' },
   { to: '/ml-prediction',      icon: '🤖', label: 'ML Prediction' },
   { to: '/ai-assistant',  icon: '💬', label: 'AI Assistant' },
   { to: '/profile',       icon: '👤', label: 'Profile' },

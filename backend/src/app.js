@@ -51,6 +51,8 @@ const preventionRoutes = require('./routes/prevention.routes');
 
 const consultationRoutes = require('./routes/expertConsultation.routes');
 
+const suppliesRoutes = require('./routes/supplies.routes');
+
 
 const app = express();
 
@@ -146,6 +148,8 @@ app.use('/api/disease', diseaseRoutes);
 app.use('/api/prevention', preventionRoutes);
 
 app.use('/api/consultations', consultationRoutes);
+
+app.use('/api/supplies', suppliesRoutes);
 
 
 // ─── Root Route ──────────────────────────────────────────────────────────────
