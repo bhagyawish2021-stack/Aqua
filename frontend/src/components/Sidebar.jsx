@@ -4,6 +4,7 @@ const links = [
   { to: '/dashboard',     icon: '🏠', label: 'Dashboard' },
   { to: '/ponds',         icon: '🏊', label: 'My Ponds' },
   { to: '/market-prices', icon: '🏷️', label: 'Live Market' },
+  { to: '/jobs',          icon: '💼', label: 'Jobs & Workers' },
   { to: '/ml-prediction', icon: '🤖', label: 'ML Prediction' },
   { to: '/ai-assistant',  icon: '💬', label: 'AI Assistant' },
   { to: '/profile',       icon: '👤', label: 'Profile' },

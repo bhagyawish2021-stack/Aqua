@@ -39,6 +39,8 @@ const aiRoutes = require('./routes/ai.routes');
 
 const marketRoutes = require('./routes/market.routes');
 
+const jobsRoutes = require('./routes/jobs.routes');
+
 
 const app = express();
 
@@ -122,6 +124,8 @@ app.use('/api/ml', mlRoutes);
 app.use('/api/ai', aiRoutes);
 
 app.use('/api/market', marketRoutes);
+
+app.use('/api/jobs', jobsRoutes);
 
 
 // ─── Root Route ──────────────────────────────────────────────────────────────
