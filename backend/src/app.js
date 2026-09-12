@@ -43,6 +43,8 @@ const jobsRoutes = require('./routes/jobs.routes');
 
 const equipmentRoutes = require('./routes/equipment.routes');
 
+const hatcheryRoutes = require('./routes/hatchery.routes');
+
 
 const app = express();
 
@@ -130,6 +132,8 @@ app.use('/api/market', marketRoutes);
 app.use('/api/jobs', jobsRoutes);
 
 app.use('/api/equipment', equipmentRoutes);
+
+app.use('/api/hatcheries', hatcheryRoutes);
 
 
 // ─── Root Route ──────────────────────────────────────────────────────────────

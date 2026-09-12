@@ -6,6 +6,7 @@ const links = [
   { to: '/market-prices', icon: '🏷️', label: 'Live Market' },
   { to: '/jobs',          icon: '💼', label: 'Jobs & Workers' },
   { to: '/equipment',     icon: '⚙️', label: 'Machinery & Gear' },
+  { to: '/hatcheries',    icon: '🧬', label: 'Hatchery & Seed' },
   { to: '/ml-prediction', icon: '🤖', label: 'ML Prediction' },
   { to: '/ai-assistant',  icon: '💬', label: 'AI Assistant' },
   { to: '/profile',       icon: '👤', label: 'Profile' },
