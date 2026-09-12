@@ -19,6 +19,7 @@ import DiseaseMonitoring from './pages/DiseaseMonitoring';
 import DiseasePrevention from './pages/DiseasePrevention';
 import ExpertConsultation from './pages/ExpertConsultation';
 import MedicinesSupplies from './pages/MedicinesSupplies';
+import SeafoodMarketplace from './pages/SeafoodMarketplace';
 import Profile from './pages/Profile';
 
 function Protected({ children }) {
@@ -51,6 +52,7 @@ export default function App() {
         <Route path="/prevention"         element={<Protected><DiseasePrevention /></Protected>} />
         <Route path="/consultations"      element={<Protected><ExpertConsultation /></Protected>} />
         <Route path="/supplies"           element={<Protected><MedicinesSupplies /></Protected>} />
+        <Route path="/seafood"            element={<Protected><SeafoodMarketplace /></Protected>} />
         <Route path="/profile"            element={<Protected><Profile /></Protected>} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

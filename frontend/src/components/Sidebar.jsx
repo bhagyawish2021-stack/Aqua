@@ -11,6 +11,7 @@ const links = [
   { to: '/prevention',         icon: '🛡️', label: 'Health & Prevention' },
   { to: '/consultations',      icon: '👨‍⚕️', label: 'Expert Advisory' },
   { to: '/supplies',           icon: '💊', label: 'Medicines & Supplies' },
+  { to: '/seafood',            icon: '🦐', label: 'Seafood Trade' },
   { to: '/ml-prediction',      icon: '🤖', label: 'ML Prediction' },
   { to: '/ai-assistant',  icon: '💬', label: 'AI Assistant' },
   { to: '/profile',       icon: '👤', label: 'Profile' },
