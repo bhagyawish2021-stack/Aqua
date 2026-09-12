@@ -1,6 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { logout as apiLogout } from '../services/authService';
+import { NavLink } from 'react-router-dom';
 
 const links = [
   { to: '/dashboard',    icon: '🏠', label: 'Dashboard' },
@@ -11,14 +9,6 @@ const links = [
 ];
 
 export default function Sidebar({ isOpen, onClose }) {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
-  async function handleLogout() {
-    try { await apiLogout(); } catch {}
-    logout();
-    navigate('/login');
-  }
 
   return (
     <>
@@ -36,8 +26,11 @@ export default function Sidebar({ isOpen, onClose }) {
             </NavLink>
           ))}
         </div>
-        <div className="sidebar-footer">
-          <button className="btn btn-secondary btn-sm btn-full" onClick={handleLogout}>Sign Out</button>
+        <div className="sidebar-footer" style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--text-secondary)', borderTop: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981' }}></span>
+            <span>AquaMitra Active</span>
+          </div>
         </div>
       </aside>
     </>
