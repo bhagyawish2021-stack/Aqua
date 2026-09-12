@@ -251,9 +251,18 @@ export default function Dashboard() {
           <div className="card" style={{ marginBottom: 24 }}>
             <div className="card-header">
               <span className="card-title">Pond Stock Summary</span>
-              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                Market value @ ₹{selectedRate.rate}/kg ({selectedRate.count} count — {selectedRate.size})
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                  Market value @ ₹{selectedRate.rate}/kg ({selectedRate.count} count — {selectedRate.size})
+                </span>
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => navigate('/market-prices')}
+                  style={{ padding: '4px 10px', fontSize: 12 }}
+                >
+                  🏷️ Live Mandi Prices →
+                </button>
+              </div>
             </div>
 
             {ponds.length === 0 ? (

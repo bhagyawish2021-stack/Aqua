@@ -264,3 +264,124 @@ tbody tr:hover { background: #f8fafc; }
 .recommendation-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 .recommendation-list li { padding: 10px 14px; background: #f8fafc; border-left: 3px solid var(--primary);
   border-radius: 0 6px 6px 0; font-size: 13px; line-height: 1.5; }
+
+/* ─── Market Prices Styling ─────────────────────────────────────────────────── */
+.market-header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.lang-toggle {
+  display: inline-flex; background: #e2e8f0; border-radius: 20px; padding: 2px;
+  font-size: 12px; font-weight: 600; cursor: pointer; border: none;
+}
+.lang-toggle button {
+  border: none; background: transparent; padding: 4px 12px; border-radius: 16px;
+  color: var(--text-secondary); transition: all 0.15s; font-size: 12px;
+}
+.lang-toggle button.active {
+  background: var(--primary); color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.market-tabs {
+  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 16px;
+  scrollbar-width: thin;
+}
+.market-tab {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px;
+  background: #fff; border: 1px solid var(--border); font-size: 13px; font-weight: 500;
+  color: var(--text-secondary); white-space: nowrap; transition: all 0.15s;
+}
+.market-tab:hover { background: #f8fafc; border-color: #cbd5e1; }
+.market-tab.active {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+}
+.tab-badge {
+  background: rgba(0,0,0,0.08); padding: 2px 7px; border-radius: 10px; font-size: 11px;
+}
+.market-tab.active .tab-badge { background: rgba(255,255,255,0.25); color: #fff; }
+
+.market-filter-bar {
+  background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+  margin-bottom: 20px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 12px;
+  align-items: center;
+}
+@media(max-width: 900px) {
+  .market-filter-bar { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width: 600px) {
+  .market-filter-bar { grid-template-columns: 1fr; }
+}
+
+.market-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px;
+}
+
+.market-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 18px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+.market-card:hover {
+  transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.06); border-color: #cbd5e1;
+}
+
+.market-card-top {
+  display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;
+}
+.market-species-info { display: flex; gap: 12px; align-items: center; }
+.market-icon-bubble {
+  width: 44px; height: 44px; border-radius: 12px; background: #f0f9ff;
+  display: flex; align-items: center; justify-content: center; font-size: 24px;
+}
+.market-species-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.market-species-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+
+.watchlist-btn {
+  background: transparent; border: none; font-size: 20px; cursor: pointer;
+  padding: 4px; border-radius: 6px; transition: transform 0.1s;
+}
+.watchlist-btn:hover { transform: scale(1.15); }
+
+.market-loc-pill {
+  display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500;
+  padding: 3px 8px; border-radius: 6px; background: #f1f5f9; color: #475569; margin-bottom: 14px;
+}
+
+.market-price-row {
+  display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px;
+  background: #fafbfc; padding: 12px; border-radius: 10px; border: 1px solid #f1f5f9;
+}
+.price-unit-tag { font-size: 12px; color: var(--text-secondary); font-weight: normal; margin-left: 2px; }
+.big-price { font-size: 24px; font-weight: 800; color: var(--text); line-height: 1; }
+.prev-price-label { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+
+.price-trend-badge {
+  display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
+  border-radius: 20px; font-size: 12px; font-weight: 700;
+}
+.trend-up { background: #dcfce7; color: #15803d; }
+.trend-down { background: #fee2e2; color: #b91c1c; }
+.trend-stable { background: #f1f5f9; color: #64748b; }
+
+.market-card-actions {
+  display: flex; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 12px;
+}
+.market-card-actions .btn { flex: 1; padding: 8px 10px; font-size: 12px; }
+
+.trend-range-toggle {
+  display: flex; gap: 6px; margin-bottom: 16px; justify-content: center;
+}
+.trend-range-toggle button {
+  border: 1px solid var(--border); background: #fff; padding: 6px 14px;
+  border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.trend-range-toggle button.active {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+}
+
+.alert-item-card {
+  border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+  margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+  background: #fff;
+}
+.alert-item-card.triggered {
+  border-color: #86efac; background: #f0fdf4;
+}
+

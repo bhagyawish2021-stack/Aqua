@@ -11,6 +11,7 @@ import Growth from './pages/Growth';
 import Business from './pages/Business';
 import MLPrediction from './pages/MLPrediction';
 import AIAssistant from './pages/AIAssistant';
+import MarketPrices from './pages/MarketPrices';
 import Profile from './pages/Profile';
 
 function Protected({ children }) {
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/ponds/:pondId/ml"             element={<Protected><MLPrediction /></Protected>} />
         <Route path="/ml-prediction" element={<Protected><MLPrediction /></Protected>} />
         <Route path="/ai-assistant"  element={<Protected><AIAssistant /></Protected>} />
+        <Route path="/market-prices" element={<Protected><MarketPrices /></Protected>} />
         <Route path="/profile"       element={<Protected><Profile /></Protected>} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

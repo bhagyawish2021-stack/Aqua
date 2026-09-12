@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom';
 
 const links = [
-  { to: '/dashboard',    icon: '🏠', label: 'Dashboard' },
-  { to: '/ponds',        icon: '🏊', label: 'My Ponds' },
-  { to: '/ml-prediction',icon: '🤖', label: 'ML Prediction' },
-  { to: '/ai-assistant', icon: '💬', label: 'AI Assistant' },
-  { to: '/profile',      icon: '👤', label: 'Profile' },
+  { to: '/dashboard',     icon: '🏠', label: 'Dashboard' },
+  { to: '/ponds',         icon: '🏊', label: 'My Ponds' },
+  { to: '/market-prices', icon: '🏷️', label: 'Live Market' },
+  { to: '/ml-prediction', icon: '🤖', label: 'ML Prediction' },
+  { to: '/ai-assistant',  icon: '💬', label: 'AI Assistant' },
+  { to: '/profile',       icon: '👤', label: 'Profile' },
 ];
 
 export default function Sidebar({ isOpen, onClose }) {
