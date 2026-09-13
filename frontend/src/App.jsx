@@ -24,7 +24,6 @@ import Profile from './pages/Profile';
 
 import Login from './pages/Login';
 import Register from './pages/Register';
-import LandingPage from './pages/LandingPage';
 
 function Protected({ children }) {
   return <ProtectedRoute>{children}</ProtectedRoute>;
@@ -34,10 +33,9 @@ export default function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/landing" element={<LandingPage />} />
         <Route path="/login"    element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
         <Route path="/dashboard"     element={<Protected><Dashboard /></Protected>} />
         <Route path="/ponds"         element={<Protected><Ponds /></Protected>} />
