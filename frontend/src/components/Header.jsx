@@ -7,7 +7,7 @@ export default function Header({ title, onMenuClick }) {
   return (
     <header className="header">
       <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-        <button className="btn-icon" onClick={onMenuClick} style={{ display:'none' }} id="menu-btn"
+        <button className="btn-icon mobile-menu-btn" onClick={onMenuClick} id="menu-btn"
           aria-label="Open menu">☰</button>
         <span className="header-title">{title}</span>
       </div>

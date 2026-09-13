@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import Layout from '../components/Layout';
 import Loading from '../components/Loading';
@@ -16,6 +16,7 @@ const EMPTY = { abw_grams: '', survival_pct: '', biomass_kg: '', recorded_at: ne
 
 export default function Growth() {
   const { pondId } = useParams();
+  const navigate = useNavigate();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -59,7 +60,13 @@ export default function Growth() {
   return (
     <Layout title="Growth Records">
       <div className="page-header">
-        <div><h2>Growth Records</h2><p>Track ABW, survival rate and biomass</p></div>
+        <div>
+          <button onClick={() => navigate('/ponds/' + pondId)} style={{ color:'var(--text-secondary)', fontSize:13, background:'none', border:'none', cursor:'pointer', marginBottom:4, display:'block' }}>
+            ← Back to Pond
+          </button>
+          <h2>Growth Records</h2>
+          <p>Track ABW, survival rate and biomass</p>
+        </div>
         <button className="btn btn-primary" onClick={() => { setForm(EMPTY); setFormError(''); setShowModal(true); }}>+ Add Record</button>
       </div>
       <ErrorMessage message={error} />

@@ -6,27 +6,25 @@
  */
 
 const requiredEnvVars = [
-  'PORT',
-  'NODE_ENV',
   'SUPABASE_URL',
   'SUPABASE_ANON_KEY',
   'SUPABASE_SERVICE_ROLE_KEY',
-  'ML_API_URL',
-  'OPENAI_API_KEY',
-  'FRONTEND_URL',
 ];
 
 function validateEnv() {
   const missing = requiredEnvVars.filter((key) => !process.env[key]);
 
   if (missing.length > 0) {
-    console.error('❌ Missing required environment variables:');
-    missing.forEach((key) => console.error(`   - ${key}`));
-    console.error('💡 Copy .env.example to .env and fill in all values.');
-    process.exit(1);
+    console.warn('⚠️ Missing recommended environment variables:');
+    missing.forEach((key) => console.warn(`   - ${key}`));
+    console.warn('💡 Continuing with safe local fallback mode.');
+  } else {
+    console.log('✅ Required environment variables validated.');
   }
 
-  console.log('✅ Environment variables validated.');
+  if (!process.env.OPENAI_API_KEY) {
+    console.warn('ℹ️ OPENAI_API_KEY not set. AI Assistant will use built-in aquaculture knowledge base.');
+  }
 }
 
 const config = {

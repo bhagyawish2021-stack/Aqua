@@ -2,39 +2,25 @@
 
 /**
  * waterQuality.controller.js — Water quality records CRUD
+ * Uses pondStore service with automatic Supabase and in-memory resilience.
  */
 
-const { supabaseAdmin } = require('../config/supabase');
+const pondStore = require('../services/pondStore.service');
 const { ApiError } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
 
-/** Verify the pond belongs to the authenticated farmer */
-async function verifyPondOwnership(pondId, userId) {
-  const { data } = await supabaseAdmin
-    .from('ponds')
-    .select('id')
-    .eq('id', pondId)
-    .eq('farmer_id', userId)
-    .single();
-  return !!data;
-}
+const DEFAULT_FARMER_ID = '00000000-0000-0000-0000-000000000001';
 
 /**
  * GET /api/ponds/:pondId/water-quality
  */
 async function getWaterQuality(req, res, next) {
   try {
-    const owned = await verifyPondOwnership(req.params.pondId, req.userId);
+    const farmerId = req.userId || DEFAULT_FARMER_ID;
+    const owned = await pondStore.verifyPondOwnership(req.params.pondId, farmerId);
     if (!owned) return next(new ApiError(403, 'Pond not found or access denied.'));
 
-    const { data, error } = await supabaseAdmin
-      .from('water_quality')
-      .select('*')
-      .eq('pond_id', req.params.pondId)
-      .order('recorded_at', { ascending: false });
-
-    if (error) return next(new ApiError(400, error.message));
-
+    const data = await pondStore.getWaterQuality(req.params.pondId);
     res.status(200).json({ success: true, count: data.length, data });
   } catch (err) {
     next(err);
@@ -49,18 +35,21 @@ async function createWaterQuality(req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return next(new ApiError(400, 'Validation failed', errors.array()));
 
-    const owned = await verifyPondOwnership(req.params.pondId, req.userId);
+    const farmerId = req.userId || DEFAULT_FARMER_ID;
+    const owned = await pondStore.verifyPondOwnership(req.params.pondId, farmerId);
     if (!owned) return next(new ApiError(403, 'Pond not found or access denied.'));
 
-    const { temperature, ph, dissolved_oxygen, salinity, ammonia, alkalinity } = req.body;
+    const { temperature, ph, dissolved_oxygen, salinity, ammonia, alkalinity, recorded_at } = req.body;
 
-    const { data, error } = await supabaseAdmin
-      .from('water_quality')
-      .insert({ pond_id: req.params.pondId, temperature, ph, dissolved_oxygen, salinity, ammonia, alkalinity })
-      .select()
-      .single();
-
-    if (error) return next(new ApiError(400, error.message));
+    const data = await pondStore.createWaterQuality(req.params.pondId, {
+      temperature,
+      ph,
+      dissolved_oxygen,
+      salinity,
+      ammonia,
+      alkalinity,
+      recorded_at
+    });
 
     res.status(201).json({ success: true, message: 'Water quality record added.', data });
   } catch (err) {
@@ -73,17 +62,11 @@ async function createWaterQuality(req, res, next) {
  */
 async function deleteWaterQuality(req, res, next) {
   try {
-    const owned = await verifyPondOwnership(req.params.pondId, req.userId);
+    const farmerId = req.userId || DEFAULT_FARMER_ID;
+    const owned = await pondStore.verifyPondOwnership(req.params.pondId, farmerId);
     if (!owned) return next(new ApiError(403, 'Pond not found or access denied.'));
 
-    const { error } = await supabaseAdmin
-      .from('water_quality')
-      .delete()
-      .eq('id', req.params.id)
-      .eq('pond_id', req.params.pondId);
-
-    if (error) return next(new ApiError(400, error.message));
-
+    await pondStore.deleteWaterQuality(req.params.id);
     res.status(200).json({ success: true, message: 'Water quality record deleted.' });
   } catch (err) {
     next(err);

@@ -27,9 +27,15 @@ router.get('/', async (req, res) => {
   let supabaseError  = null;
 
   try {
-    const { error } = await supabase
+    const probePromise = supabase
       .from('profiles')
-      .select('*', { count: 'exact', head: true });  // head:true → no rows returned
+      .select('*', { count: 'exact', head: true });
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Supabase probe timeout')), 1200)
+    );
+
+    const { error } = await Promise.race([probePromise, timeoutPromise]);
 
     if (error) {
       // A known Supabase API error (e.g. table not found, RLS denial)
@@ -39,9 +45,9 @@ router.get('/', async (req, res) => {
       supabaseStatus = 'connected';
     }
   } catch (err) {
-    // Network-level failure — do not expose stack trace or secrets
+    // Network-level failure or timeout — do not expose stack trace or secrets
     supabaseStatus = 'disconnected';
-    supabaseError  = 'Unable to reach Supabase. Check network or project URL.';
+    supabaseError  = err.message || 'Unable to reach Supabase. Check network or project URL.';
   }
 
   // ── Response ──────────────────────────────────────────────────────────────

@@ -9,42 +9,54 @@ const DEFAULT_USER = {
   email: 'farmer@aquamitra.com',
   phone: '+91 98765 43210',
   language: 'en',
+  role: 'farmer',
 };
 
 const DEFAULT_TOKEN = 'demo-token';
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(DEFAULT_USER);
-  const [token, setToken] = useState(() => localStorage.getItem('aqm_token') || DEFAULT_TOKEN);
+  // If user previously logged out, honor null; otherwise default to demo token
+  const [token, setToken] = useState(() => {
+    const stored = localStorage.getItem('aqm_token');
+    if (stored === 'logged_out') return null;
+    return stored || DEFAULT_TOKEN;
+  });
+
+  const [user, setUser] = useState(() => (token ? DEFAULT_USER : null));
   const [loading, setLoading] = useState(false);
 
   const logout = useCallback(() => {
-    // Kept for compatibility, but maintains logged-in state
-    localStorage.removeItem('aqm_token');
-    setUser(DEFAULT_USER);
-    setToken(DEFAULT_TOKEN);
-    api.defaults.headers.common['Authorization'] = 'Bearer ' + DEFAULT_TOKEN;
+    localStorage.setItem('aqm_token', 'logged_out');
+    setUser(null);
+    setToken(null);
+    delete api.defaults.headers.common['Authorization'];
   }, []);
 
-  useEffect(() => {
-    const currentToken = token || DEFAULT_TOKEN;
-    api.defaults.headers.common['Authorization'] = 'Bearer ' + currentToken;
-    api.get('/api/profile')
-      .then(res => {
-        if (res.data?.data) setUser(res.data.data);
-      })
-      .catch(() => {
-        // Keep default user if backend is offline or profile not found
-      });
-  }, [token]);
-
-  function login(newToken, userData) {
+  const login = useCallback((newToken, userData) => {
     const t = newToken || DEFAULT_TOKEN;
     localStorage.setItem('aqm_token', t);
     api.defaults.headers.common['Authorization'] = 'Bearer ' + t;
     setToken(t);
-    if (userData) setUser(userData);
-  }
+    if (userData) {
+      setUser({ ...DEFAULT_USER, ...userData });
+    } else {
+      setUser(DEFAULT_USER);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!token) return;
+    api.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+    api.get('/api/profile')
+      .then(res => {
+        if (res.data?.data) {
+          setUser(prev => ({ ...prev, ...res.data.data }));
+        }
+      })
+      .catch(() => {
+        // Retain current user if backend profile is offline
+      });
+  }, [token]);
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, loading, setUser }}>

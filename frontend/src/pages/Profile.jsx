@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import ErrorMessage from '../components/ErrorMessage';
 import Loading from '../components/Loading';
@@ -7,7 +8,8 @@ import { getProfile, updateProfile } from '../services/profileService';
 import { getErrorMsg } from '../helpers/errorMsg';
 
 export default function Profile() {
-  const { setUser } = useAuth();
+  const { user, setUser, logout } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState({ name:'', phone:'', language:'en' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -75,6 +77,22 @@ export default function Profile() {
             </div>
             <button className="btn btn-primary" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
           </form>
+
+          <div style={{ marginTop: 24, paddingTop: 16, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={() => {
+                logout();
+                navigate('/login');
+              }}
+            >
+              🚪 Sign Out
+            </button>
+            <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+              Active Role: <strong style={{ textTransform: 'capitalize', color: 'var(--primary)' }}>{user?.role || 'Farmer'}</strong>
+            </span>
+          </div>
         </div>
       </div>
     </Layout>

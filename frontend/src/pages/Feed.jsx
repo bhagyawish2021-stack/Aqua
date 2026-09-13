@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import Loading from '../components/Loading';
 import EmptyState from '../components/EmptyState';
@@ -15,6 +15,7 @@ const EMPTY = { feed_type: '', quantity_kg: '', cost: '', recorded_at: new Date(
 
 export default function Feed() {
   const { pondId } = useParams();
+  const navigate = useNavigate();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -59,7 +60,13 @@ export default function Feed() {
   return (
     <Layout title="Feed Management">
       <div className="page-header">
-        <div><h2>Feed Management</h2><p>Track feed usage and costs</p></div>
+        <div>
+          <button onClick={() => navigate('/ponds/' + pondId)} style={{ color:'var(--text-secondary)', fontSize:13, background:'none', border:'none', cursor:'pointer', marginBottom:4, display:'block' }}>
+            ← Back to Pond
+          </button>
+          <h2>Feed Management</h2>
+          <p>Track feed consumption and costs</p>
+        </div>
         <button className="btn btn-primary" onClick={() => { setForm(EMPTY); setFormError(''); setShowModal(true); }}>+ Add Record</button>
       </div>
       <ErrorMessage message={error} />

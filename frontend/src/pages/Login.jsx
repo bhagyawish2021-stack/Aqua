@@ -51,7 +51,29 @@ export default function Login() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <div className="auth-footer">
+
+        <div style={{ margin: '16px 0 12px', textAlign: 'center', position: 'relative' }}>
+          <span style={{ background: '#fff', padding: '0 10px', color: '#94a3b8', fontSize: 12 }}>OR</span>
+        </div>
+
+        <button
+          type="button"
+          className="btn btn-secondary btn-full"
+          onClick={() => {
+            login('demo-token', {
+              id: '00000000-0000-0000-0000-000000000001',
+              name: 'Aqua Farmer',
+              email: 'farmer@aquamitra.com',
+              role: 'farmer'
+            });
+            navigate('/dashboard');
+          }}
+          style={{ fontWeight: 700 }}
+        >
+          ⚡ Instant Demo Access as Aqua Farmer
+        </button>
+
+        <div className="auth-footer" style={{ marginTop: 16 }}>
           Don't have an account? <Link to="/register">Create one</Link>
         </div>
       </div>

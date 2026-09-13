@@ -9,11 +9,11 @@ const rateLimit = require('express-rate-limit');
 
 /**
  * General rate limiter — applied to all /api routes.
- * Allows 100 requests per 15-minute window per IP.
+ * Allows 1500 requests per 15-minute window per IP.
  */
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
+  max: 1500,
   standardHeaders: true,  // Return rate limit info in RateLimit-* headers
   legacyHeaders: false,
   message: {
@@ -26,11 +26,11 @@ const generalLimiter = rateLimit({
 
 /**
  * Strict rate limiter — applied to auth routes (login, register).
- * Allows 10 requests per 15-minute window per IP.
+ * Allows 30 requests per 15-minute window per IP.
  */
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 30,
   standardHeaders: true,
   legacyHeaders: false,
   message: {

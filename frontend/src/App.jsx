@@ -22,6 +22,9 @@ import MedicinesSupplies from './pages/MedicinesSupplies';
 import SeafoodMarketplace from './pages/SeafoodMarketplace';
 import Profile from './pages/Profile';
 
+import Login from './pages/Login';
+import Register from './pages/Register';
+
 function Protected({ children }) {
   return <ProtectedRoute>{children}</ProtectedRoute>;
 }
@@ -30,8 +33,8 @@ export default function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/login"    element={<Navigate to="/dashboard" replace />} />
-        <Route path="/register" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/login"    element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
         <Route path="/dashboard"     element={<Protected><Dashboard /></Protected>} />

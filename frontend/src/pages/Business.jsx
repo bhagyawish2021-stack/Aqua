@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import Loading from '../components/Loading';
 import EmptyState from '../components/EmptyState';
@@ -15,6 +15,7 @@ const EMPTY = { feed_expense:'', labor_expense:'', medicine_expense:'', other_ex
 
 export default function Business() {
   const { pondId } = useParams();
+  const navigate = useNavigate();
   const [records, setRecords] = useState([]);
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -61,7 +62,13 @@ export default function Business() {
   return (
     <Layout title="Business">
       <div className="page-header">
-        <div><h2>Business Records</h2><p>Track expenses, revenue and profitability</p></div>
+        <div>
+          <button onClick={() => navigate('/ponds/' + pondId)} style={{ color:'var(--text-secondary)', fontSize:13, background:'none', border:'none', cursor:'pointer', marginBottom:4, display:'block' }}>
+            ← Back to Pond
+          </button>
+          <h2>Business Records</h2>
+          <p>Track expenses, revenue and profitability</p>
+        </div>
         <button className="btn btn-primary" onClick={() => { setForm(EMPTY); setFormError(''); setShowModal(true); }}>+ Add Record</button>
       </div>
       <ErrorMessage message={error} />

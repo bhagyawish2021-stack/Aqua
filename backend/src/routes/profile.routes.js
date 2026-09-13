@@ -9,7 +9,7 @@ const router = express.Router();
 
 const updateRules = [
   body('name').optional().trim().notEmpty().withMessage('Name cannot be empty.'),
-  body('phone').optional().isMobilePhone().withMessage('Invalid phone number.'),
+  body('phone').optional().customSanitizer(v => typeof v === 'string' ? v.replace(/[\s-]+/g, '') : v).isMobilePhone('any').withMessage('Invalid phone number.'),
   body('language').optional().isIn(['en', 'te']).withMessage('Language must be en or te.'),
 ];
 
